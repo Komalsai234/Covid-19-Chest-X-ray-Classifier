@@ -16,4 +16,8 @@ scipy
 Flask
 Flask-Cors
 gdown
+streamlit
+numpy
+opencv-python
+shutil
 -e .

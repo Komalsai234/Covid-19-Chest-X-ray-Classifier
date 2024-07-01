@@ -34,6 +34,9 @@ class Training:
             **datagenerator_kwargs
         )
 
+        print("******")
+        print(self.config.training_data)
+
         self.valid_generator = valid_datagenerator.flow_from_directory(
             directory=self.config.training_data,
             subset="validation",
@@ -65,6 +68,8 @@ class Training:
     @staticmethod
     def save_model(path: Path, model: tf.keras.Model):
         model.save(path)
+        os.makedirs("model")
+        model.save("model/model.h5")
 
 
 
