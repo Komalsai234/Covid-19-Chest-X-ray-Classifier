@@ -1,61 +1,72 @@
 pipeline {
-  agent any
-  environment {
-    ECR_REPOSITORY = credentials('ECR_REPOSITORY')
-    AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
-    AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-  }
-  
-  stages {
-    stage('Continuous Integration') {
-      steps {
-        script {
-          echo "Linting repository"
-          echo "Running unit tests"
-        }
-      }
+    agent any
+    
+    environment {
+        ECR_REPOSITORY = credentials('ECR_REPOSITORY')
+        AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
-
-    stage('Login to ECR') {
-      steps {
-        script {
-          sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com'
+    
+    stages {
+        stage('Continuous Integration') {
+            steps {
+                script {
+                    echo "Linting repository"
+                    echo "Running unit tests"
+                    // Add additional CI steps as needed
+                }
+            }
         }
 
-      }
-    }
-
-    stage('Build Image') {
-      steps {
-        script {
-          sh 'docker build -t ${ECR_REPOSITORY}:latest .'
+        stage('Login to ECR') {
+            steps {
+                script {
+                    // Configure AWS CLI with credentials
+                    sh 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}'
+                    sh 'aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}'
+                    sh 'aws configure set default.region us-east-1'
+                    
+                    // Login to ECR
+                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+                }
+            }
         }
 
-      }
-    }
-
-    stage('Push Image') {
-      steps {
-        script {
-          sh 'docker push ${ECR_REPOSITORY}:latest'
+        stage('Build Image') {
+            steps {
+                script {
+                    // Build Docker image
+                    sh 'docker build -t ${ECR_REPOSITORY}:latest .'
+                }
+            }
         }
 
-      }
-    }
-
-    stage('Continuous Deployment') {
-      steps {
-        sshagent(['ssh_key']) {
-          sh "ssh -o StrictHostKeyChecking=no -l ubuntu 54.197.164.187 'cd /home/ubuntu/ && wget https://github.com/Komalsai234/Covid-19-Chest-X-ray-Classifier/blob/main/docker-compose.yml && export IMAGE_NAME=${ECR_REPOSITORY}:latest && aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com && docker compose up -d '"
+        stage('Push Image') {
+            steps {
+                script {
+                    // Push Docker image to ECR
+                    sh 'docker push ${ECR_REPOSITORY}:latest'
+                }
+            }
         }
-      }
-    }
-  }
 
-  post {
-    always {
-      sh 'docker system prune -f'
+        stage('Continuous Deployment') {
+            steps {
+                sshagent(['ssh_key']) {
+                    script {
+                        // Deploy using docker-compose on remote server
+                        sh "ssh -o StrictHostKeyChecking=no -l ubuntu 54.197.164.187 'cd /home/ubuntu/ && wget -O docker-compose.yml https://raw.githubusercontent.com/Komalsai234/Covid-19-Chest-X-ray-Classifier/main/docker-compose.yml && export IMAGE_NAME=${ECR_REPOSITORY}:latest && aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com && docker-compose up -d'"
+                    }
+                }
+            }
+        }
     }
-  }
+
+    post {
+        always {
+            // Clean up Docker resources
+            sh 'docker system prune -f'
+        }
+    }
 }
