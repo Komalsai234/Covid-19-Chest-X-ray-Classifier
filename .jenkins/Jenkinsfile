@@ -20,7 +20,10 @@ pipeline {
     stage('Login to ECR') {
       steps {
         script {
-          sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com'
+          sh '''
+            echo "Logging into ECR"
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
+          '''
         }
       }
     }
@@ -45,6 +48,8 @@ pipeline {
       steps {
         sshagent(['ssh_key']) {
           sh '''
+            echo "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"
+            echo "ECR_REPOSITORY: ${ECR_REPOSITORY}"
             ssh -o StrictHostKeyChecking=no -l ubuntu 54.197.164.187 '
               if ! command -v docker-compose &> /dev/null
               then
