@@ -3,4 +3,3 @@ numpy
 joblib
 streamlit
 opencv-python
--e .
