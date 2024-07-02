@@ -97,8 +97,8 @@ stages:
       size: 588
     - path: src/Covid_19/pipeline/stage_04_model_evaluation.py
       hash: md5
-      md5: ac28deb1cb76837d9f9a078f5160b96b
-      size: 923
+      md5: 7855911d888932f7d24e2d7017ea0b37
+      size: 921
     params:
       params.yaml:
         BATCH_SIZE: 16

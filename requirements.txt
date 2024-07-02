@@ -20,4 +20,5 @@ streamlit
 numpy
 opencv-python
 shutil
+dagshub
 -e .
