@@ -6,7 +6,7 @@ pipeline {
     AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
   }
-
+  
   stages {
     stage('Continuous Integration') {
       steps {
@@ -20,11 +20,9 @@ pipeline {
     stage('Login to ECR') {
       steps {
         script {
-          sh '''
-            echo "Logging into ECR"
-            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
-          '''
+          sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com'
         }
+
       }
     }
 
@@ -33,6 +31,7 @@ pipeline {
         script {
           sh 'docker build -t ${ECR_REPOSITORY}:latest .'
         }
+
       }
     }
 
@@ -41,28 +40,14 @@ pipeline {
         script {
           sh 'docker push ${ECR_REPOSITORY}:latest'
         }
+
       }
     }
 
     stage('Continuous Deployment') {
       steps {
         sshagent(['ssh_key']) {
-          sh '''
-            echo "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"
-            echo "ECR_REPOSITORY: ${ECR_REPOSITORY}"
-            ssh -o StrictHostKeyChecking=no -l ubuntu 54.197.164.187 '
-              if ! command -v docker-compose &> /dev/null
-              then
-                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-                sudo chmod +x /usr/local/bin/docker-compose
-              fi
-              cd /home/ubuntu/ &&
-              wget -O docker-compose.yml https://raw.githubusercontent.com/Komalsai234/Covid-19-Chest-X-ray-Classifier/main/docker-compose.yml &&
-              export IMAGE_NAME=${ECR_REPOSITORY}:latest &&
-              aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com &&
-              docker-compose up -d
-            '
-          '''
+          sh "ssh -o StrictHostKeyChecking=no -l ubuntu 54.197.164.187 'cd /home/ubuntu/ && wget https://github.com/Komalsai234/Covid-19-Chest-X-ray-Classifier/blob/main/docker-compose.yml && export IMAGE_NAME=${ECR_REPOSITORY}:latest && aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com && docker compose up -d '"
         }
       }
     }
