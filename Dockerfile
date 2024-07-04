@@ -1,12 +1,16 @@
 FROM python:3.9-slim-buster
 
-RUN apt update -y && apt install awscli -y
+ENV HOST=0.0.0.0
+ENV LISTEN_PORT=8080
+
+EXPOSE 8080
+
+RUN apt-get update && apt-get install -y git
+
 WORKDIR /app
 
 COPY . /app
 
-RUN git clone https://github.com/streamlit/streamlit-example.git .
-
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["streamlit", "run", "streamlit_app.py"]
+CMD ["streamlit", "run", "demo_app/main.py", "--server.port", "8080"]
