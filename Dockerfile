@@ -4,6 +4,9 @@ RUN apt update -y && apt install awscli -y
 WORKDIR /app
 
 COPY . /app
+
+RUN git clone https://github.com/streamlit/streamlit-example.git .
+
 RUN pip install -r requirements.txt
 
-CMD streamlit run app.py
+ENTRYPOINT ["streamlit", "run", "streamlit_app.py"]
