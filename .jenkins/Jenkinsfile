@@ -46,11 +46,8 @@ pipeline {
 
     stage('Continuous Deployment') {
       steps {
-       script {
-          sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
-          sh "docker pull ${ECR_REPOSITORY}:latest"
-
-          sh "docker run -d -p 8080:8080 ${ECR_REPOSITORY}:latest"
+        sshagent(['ssh_key']) {
+          sh "ssh -o StrictHostKeyChecking=no -l ubuntu 34.227.20.231 'cd /home/ubuntu/ && wget https://raw.githubusercontent.com/entbappy/Chest-Disease-Classification-from-Chest-CT-Scan-Image/main/docker-compose.yml && export IMAGE_NAME=${ECR_REPOSITORY}:latest && aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com && docker compose up -d '"
         }
       }
     }
