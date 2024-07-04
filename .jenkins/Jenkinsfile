@@ -22,6 +22,7 @@ pipeline {
         script {
           sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com'
         }
+
       }
     }
 
@@ -30,6 +31,7 @@ pipeline {
         script {
           sh 'docker build -t ${ECR_REPOSITORY}:latest .'
         }
+
       }
     }
 
@@ -38,20 +40,14 @@ pipeline {
         script {
           sh 'docker push ${ECR_REPOSITORY}:latest'
         }
+
       }
     }
 
     stage('Continuous Deployment') {
       steps {
         sshagent(['ssh_key']) {
-          sh '''
-            ssh -o StrictHostKeyChecking=no -l ubuntu 54.211.77.15 << EOF
-              export IMAGE_NAME=${ECR_REPOSITORY}:latest
-              aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
-              docker pull ${IMAGE_NAME}
-              docker run -d -p 8080:8080 ${IMAGE_NAME}
-            EOF
-          '''
+          sh "ssh -o StrictHostKeyChecking=no -l ubuntu 34.238.142.75 'cd /home/ubuntu/ && wget https://github.com/Komalsai234/Covid-19-Chest-X-ray-Classifier/blob/main/docker-compose.yml && export IMAGE_NAME=${ECR_REPOSITORY}:latest && aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com && docker compose up -d '"
         }
       }
     }
