@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import cv2
-from Covid_19.pipeline.prediction import PredictionPipeline
+from src.Covid_19.pipeline.prediction import PredictionPipeline
 
 st.title("Covid-19 Chest X-ray Classifier")
 
