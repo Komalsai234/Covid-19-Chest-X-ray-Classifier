@@ -19,7 +19,7 @@ An automated machine learning model to assist in the diagnosis of COVID-19 infec
 - [CI/CD Pipeline](#cicd-pipeline)
 
 ## Introduction
-This project aims to classify Covid-19 using Chest X-ray images. The project is modular and employs various tools and techniques to ensure scalability, reproducibility, and maintainability. It uses DVC for tracking data and model pipelines, MLflow for tracking metrics, and Jenkins for CI/CD implementation. The project is containerized using Docker and deployed on AWS EC2 instances.
+This project aims to classify Covid-19 using Chest X-ray images. The project is modular and employs various tools and techniques to ensure scalability, reproducibility, and maintainability. It uses DVC for tracking model pipelines, MLflow for tracking metrics, and Jenkins for CI/CD implementation. The project is containerized using Docker and deployed on AWS EC2 instances.
 
 ## Dataset
 The Dataset used for training the model is taken from Kaggle which consist of 4044 Covid and 5500 Normal/Non-Covid Chest X-rays. The link for the dataset can be find here
