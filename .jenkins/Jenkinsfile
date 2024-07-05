@@ -49,8 +49,7 @@ pipeline {
         sshagent(['ssh_key']) {
           sh '''
                     ssh -o StrictHostKeyChecking=no -l ubuntu 54.157.45.29 <<EOF
-                    cd /home/ubuntu/
-                    IMAGE_NAME="${ECR_REPOSITORY}:latest"
+                    export IMAGE_NAME="${ECR_REPOSITORY}:latest"
                     echo "Deploying Docker Image: ${IMAGE_NAME}"
                     aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
                     docker run -d -p 8501:8501 ${IMAGE_NAME}
