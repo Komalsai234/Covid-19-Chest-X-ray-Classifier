@@ -11,7 +11,8 @@ An automated machine learning model to assist in the diagnosis of COVID-19 infec
 - [Project Workflow](#project-Workflow)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Setup Jenkins in EC2](#https://github.com/Komalsai234/Covid-19-Chest-X-ray-Classifier/blob/main/jenkins-setup/setup.md)
+- [Setup Jenkins in EC2](https://github.com/Komalsai234/Covid-19-Chest-X-ray-Classifier/blob/main/jenkins-setup/setup.md)
+
 - [Data Pipeline](#data-pipeline)
 - [Model Training](#model-training)
 - [Model Evaluation](#model-evaluation)
