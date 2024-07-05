@@ -20,4 +20,8 @@ COPY . /app
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
+RUN pip3 show streamlit
+
+ENV PATH="/root/.local/bin:${PATH}"
+
 ENTRYPOINT ["streamlit", "run", "app/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
