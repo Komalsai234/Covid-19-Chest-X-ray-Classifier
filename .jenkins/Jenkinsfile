@@ -48,11 +48,11 @@ pipeline {
       steps {
         sshagent(['ssh_key']) {
           sh '''
-                    ssh -o StrictHostKeyChecking=no -l ubuntu 34.227.20.231 <<EOF
+                    ssh -o StrictHostKeyChecking=no -l ubuntu 54.157.45.29 <<EOF
                     cd /home/ubuntu/
                     export IMAGE_NAME=${ECR_REPOSITORY}:latest
                     aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
-                    docker run -d -p 8080:8501 ${IMAGE_NAME}
+                    docker run -d -p 8501:8501 ${IMAGE_NAME}
                     EOF
                     '''
         }
