@@ -1,4 +1,4 @@
-name: Trigger Jenkins Job
+name: Trigger Jenkins
 
 on:
   workflow_dispatch:
@@ -15,3 +15,4 @@ jobs:
           user: ${{ secrets.USER }}
           token: ${{ secrets.TOKEN }}
           job: ${{ secrets.JOBS }}
+          
