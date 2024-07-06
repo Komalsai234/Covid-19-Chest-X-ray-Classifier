@@ -37,10 +37,10 @@ https://www.kaggle.com/datasets/amanullahasraf/covid19-pneumonia-normal-chest-xr
 ### Prerequisites
 - Python 3.9 or higher
 - Docker
-- Docker Compose
 - DVC
 - MLflow
 - Jenkins
+- AWS Account
 
 ### Project Workflow
 
