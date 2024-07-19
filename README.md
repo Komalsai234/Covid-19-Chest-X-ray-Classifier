@@ -48,7 +48,6 @@ https://www.kaggle.com/datasets/amanullahasraf/covid19-pneumonia-normal-chest-xr
 1. **Clone the repository**
     ```bash
     git clone https://github.com/Komalsai234/Covid-19-Chest-X-ray-Classifier.git
-    cd Covid-19-Chest-X-ray-Classifier
     ```
 
 2. **Install dependencies**
